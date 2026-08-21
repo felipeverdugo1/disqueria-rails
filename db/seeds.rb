@@ -69,7 +69,7 @@ generos_musicales = [
   "Tango",
   "Flamenco",
   "Samba",
-  "K-Pop",
+  "K-Pop"
 ]
 
 generos_musicales.each do |genero|
@@ -94,7 +94,7 @@ artistas = [
   { nombre: "Nirvana" },
   { nombre: "Beyoncé" },
   { nombre: "Elvis Presley" },
-  { nombre: "Madonna" },
+  { nombre: "Madonna" }
 ]
 
 artistas.each do |artista|
@@ -145,13 +145,13 @@ productos_data.each_with_index do |data, index|
     autor: autor,
     categoria: categoria
   )
-  
+
   # Crear una imagen placeholder (puedes reemplazar con imágenes reales)
   # Usando un servicio de placeholders para imágenes
   begin
     # Usar placeholder.com para generar imágenes de prueba
-    image_url = "https://via.placeholder.com/500x500/#{['4F46E5', '7C3AED', 'EC4899', 'F59E0B'].sample}/FFFFFF?text=#{URI.encode_www_form_component(data[:nombre])}"
-    
+    image_url = "https://via.placeholder.com/500x500/#{[ '4F46E5', '7C3AED', 'EC4899', 'F59E0B' ].sample}/FFFFFF?text=#{URI.encode_www_form_component(data[:nombre])}"
+
     downloaded_image = URI.open(image_url)
     producto.imagenes.attach(
       io: downloaded_image,
@@ -161,28 +161,28 @@ productos_data.each_with_index do |data, index|
   rescue => e
     puts "Error al descargar imagen para #{data[:nombre]}: #{e.message}"
   end
-  
+
   # Si es usado, agregar audio de muestra (placeholder)
   if data[:estado] == "usado"
     begin
       # Crear un archivo de audio vacío como placeholder
-      audio_file = Tempfile.new(['sample', '.mp3'])
+      audio_file = Tempfile.new([ 'sample', '.mp3' ])
       audio_file.write("ID3")  # Header básico de MP3
       audio_file.rewind
-      
+
       producto.audio_muestra.attach(
         io: audio_file,
         filename: "#{data[:nombre].parameterize}_sample.mp3",
         content_type: 'audio/mpeg'
       )
-      
+
       audio_file.close
       audio_file.unlink
     rescue => e
       puts "Error al crear audio para #{data[:nombre]}: #{e.message}"
     end
   end
-  
+
   puts "Producto creado: #{producto.nombre} (#{producto.tipo} - #{producto.estado})"
 end
 

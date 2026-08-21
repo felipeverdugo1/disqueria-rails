@@ -1,15 +1,15 @@
 class ProductosController < ApplicationController
-  before_action :authenticate_user!, except: [:show]
-  load_and_authorize_resource except: [:show]
+  before_action :authenticate_user!, except: [ :show ]
+  load_and_authorize_resource except: [ :show ]
   before_action :set_producto, only: %i[ show edit update destroy delete_image ]
 
-  
+
 
   # GET /productos or /productos.json
   def index
-    #utilizo ransack para busqueda y filtros
+    # utilizo ransack para busqueda y filtros
     @q = Producto.activos.ransack(params[:q])
-    #utilizo will_paginate para paginacion
+    # utilizo will_paginate para paginacion
     @productos = @q.result(distinct: true).paginate(page: params[:page], per_page: 15)
   end
 
@@ -19,7 +19,7 @@ class ProductosController < ApplicationController
     @productos_relacionados = @producto.productos_relacionados.limit(4)
     # Si el usuario no está autenticado, renderiza la vista del storefront
     if !user_signed_in?
-      render 'home/show'
+      render "home/show"
     end
     # Si está autenticado, renderiza la vista administrativa normal
   end
@@ -73,7 +73,7 @@ class ProductosController < ApplicationController
         imagenes_validas = nuevas_imagenes.reject(&:blank?)
         @producto.imagenes.attach(imagenes_validas) if imagenes_validas.any?
       end
-      
+
       format.html { redirect_to productos_path, notice: "Producto actualizado.", status: :see_other }
       format.json { render :show, status: :ok, location: @producto }
     else
@@ -85,7 +85,7 @@ end
 
   # DELETE /productos/1 or /productos/1.json
   def destroy
-    #hago un borrado logico
+    # hago un borrado logico
     @producto.update(
       fecha_baja: Time.current,
       stock: 0,
@@ -103,7 +103,7 @@ end
     imagen.purge
     redirect_to edit_producto_path(@producto), notice: "Imagen eliminada correctamente."
   end
-  
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_producto
@@ -113,7 +113,7 @@ end
         respond_to do |format|
           format.html { redirect_to productos_path, alert: "Producto no encontrado" }
         end
-        return false
+        false
     end
 
     # Only allow a list of trusted parameters through.
@@ -132,7 +132,7 @@ end
         :autor_id,
         :categoria_id,
         :audio_muestra,
-        imagenes: [] 
+        imagenes: []
       )
     end
-  end
+end

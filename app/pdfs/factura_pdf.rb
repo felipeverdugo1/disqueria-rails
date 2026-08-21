@@ -1,13 +1,13 @@
 # app/pdfs/factura_pdf.rb
-require 'prawn'
-require 'prawn/table'
+require "prawn"
+require "prawn/table"
 
 class FacturaPdf < Prawn::Document
   def initialize(venta)
     super(
-      page_size: 'A4',
+      page_size: "A4",
       page_layout: :portrait,
-      margin: [40, 40, 40, 40]
+      margin: [ 40, 40, 40, 40 ]
     )
 
     @venta = venta
@@ -36,34 +36,33 @@ class FacturaPdf < Prawn::Document
   end
 
   def header
-    text "FACTURA DE VENTA", size: 24, style: :bold, align: :center, color: '333333'
-    text "Nº #{@venta.id.to_s.rjust(6, '0')}", size: 16, align: :center, color: '666666'
+    text "FACTURA DE VENTA", size: 24, style: :bold, align: :center, color: "333333"
+    text "Nº #{@venta.id.to_s.rjust(6, '0')}", size: 16, align: :center, color: "666666"
     stroke_horizontal_rule
   end
 
   def info_cliente
     data = [
-      ["<b>Fecha:</b>", @venta.fecha.strftime('%d/%m/%Y %H:%M')],
-      ["<b>Cliente:</b>", @venta.NyA_comprador || "Consumidor Final"],
-      ["<b>DNI:</b>", @venta.dni_comprador || "No especificado"],
-      ["<b>Vendedor:</b>", @venta.user&.email || "Sistema"]
+      [ "<b>Fecha:</b>", @venta.fecha.strftime("%d/%m/%Y %H:%M") ],
+      [ "<b>Cliente:</b>", @venta.NyA_comprador || "Consumidor Final" ],
+      [ "<b>DNI:</b>", @venta.dni_comprador || "No especificado" ],
+      [ "<b>Vendedor:</b>", @venta.user&.email || "Sistema" ]
     ]
 
-    table(data, cell_style: { inline_format: true, border_width: 0, padding: [5, 10, 5, 0] }) do
+    table(data, cell_style: { inline_format: true, border_width: 0, padding: [ 5, 10, 5, 0 ] }) do
       column(0).width = 100
       column(0).font_style = :bold
     end
   end
 
   def productos_table
-
     if @venta.detalle_ventas.empty?
       text "No hay productos en esta venta.", size: 12
       return
     end
 
     # Encabezados de la tabla
-    data = [["<b>Producto</b>", "<b>Cantidad</b>", "<b>Precio Unit.</b>", "<b>Subtotal</b>"]]
+    data = [ [ "<b>Producto</b>", "<b>Cantidad</b>", "<b>Precio Unit.</b>", "<b>Subtotal</b>" ] ]
 
     # Filas de productos
     @venta.detalle_ventas.each do |detalle|
@@ -87,8 +86,8 @@ class FacturaPdf < Prawn::Document
           cell_style: {
             inline_format: true,
             border_width: 1,
-            border_color: 'DDDDDD',
-            padding: [6, 8],
+            border_color: "DDDDDD",
+            padding: [ 6, 8 ],
             size: 9
           },
           column_widths: {
@@ -97,9 +96,8 @@ class FacturaPdf < Prawn::Document
             2 => page_width * 0.17,  # Precio Unit.
             3 => page_width * 0.18   # Subtotal
           }) do
-
       row(0).font_style = :bold
-      row(0).background_color = 'F0F0F0'
+      row(0).background_color = "F0F0F0"
       row(0).align = :center
 
       # Alineación de columnas
@@ -119,20 +117,19 @@ class FacturaPdf < Prawn::Document
     total = subtotal + iva
 
     data = [
-      ["<b>SUBTOTAL:</b>", "$#{number_with_delimiter(subtotal)}"],
-      ["<b>IVA (21%):</b>", "$#{number_with_delimiter(iva)}"],
-      ["<b>TOTAL:</b>", "$#{number_with_delimiter(total)}"]
+      [ "<b>SUBTOTAL:</b>", "$#{number_with_delimiter(subtotal)}" ],
+      [ "<b>IVA (21%):</b>", "$#{number_with_delimiter(iva)}" ],
+      [ "<b>TOTAL:</b>", "$#{number_with_delimiter(total)}" ]
     ]
 
     table(data,
           cell_style: {
             inline_format: true,
             border_width: 0,
-            padding: [8, 10, 8, 0]
+            padding: [ 8, 10, 8, 0 ]
           },
           position: :right,
           width: 300) do
-
       column(0).width = 150
       column(0).align = :right
       column(1).width = 150
@@ -144,11 +141,11 @@ class FacturaPdf < Prawn::Document
   end
 
   def footer
-    bounding_box([bounds.left, bounds.bottom + 40], width: bounds.width) do
+    bounding_box([ bounds.left, bounds.bottom + 40 ], width: bounds.width) do
       stroke_horizontal_rule
       move_down 10
-      text "Gracias por su compra", size: 10, align: :center, color: '666666'
-      text "Sistema de Ventas © #{Time.now.year}", size: 8, align: :center, color: '999999'
+      text "Gracias por su compra", size: 10, align: :center, color: "666666"
+      text "Sistema de Ventas © #{Time.now.year}", size: 8, align: :center, color: "999999"
     end
   end
 
@@ -158,10 +155,10 @@ class FacturaPdf < Prawn::Document
     # Método para formatear números con puntos como separadores de miles y 2 decimales
     def number_with_delimiter(number)
       # Convierte a float y formatea con 2 decimales
-      formatted = sprintf('%.2f', number.to_f)
+      formatted = sprintf("%.2f", number.to_f)
 
       # Separa la parte entera de los decimales
-      integer_part, decimal_part = formatted.split('.')
+      integer_part, decimal_part = formatted.split(".")
 
       # Agrega puntos separadores de miles a la parte entera
       integer_with_dots = integer_part.reverse.gsub(/(\d{3})(?=\d)/, '\\1.').reverse

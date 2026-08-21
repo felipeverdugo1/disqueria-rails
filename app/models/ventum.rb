@@ -1,14 +1,14 @@
 class Ventum < ApplicationRecord
   belongs_to :user
-  has_many :detalle_ventas, class_name: 'DetalleVentum', foreign_key: 'venta_id', dependent: :destroy
+  has_many :detalle_ventas, class_name: "DetalleVentum", foreign_key: "venta_id", dependent: :destroy
   has_many :productos, through: :detalle_ventas
 
-  scope :activas, -> { where(cancelada: [nil,false]) }
+  scope :activas, -> { where(cancelada: [ nil, false ]) }
   scope :canceladas, -> { where(cancelada: true) }
 
   def cancelar!
     return false if cancelada?
-    
+
     ActiveRecord::Base.transaction do
       # Restaurar stock
       detalle_ventas.each do |detalle|
@@ -19,7 +19,7 @@ class Ventum < ApplicationRecord
           producto.update!(fecha_baja: nil)
         end
       end
-      
+
       # Marcar como cancelada
       update!(cancelada: true)
     end

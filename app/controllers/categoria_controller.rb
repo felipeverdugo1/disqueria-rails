@@ -66,7 +66,7 @@ class CategoriaController < ApplicationController
     end
   end
   private
-    # Use callbacks to share common setup or constraints between actions.
+  # Use callbacks to share common setup or constraints between actions.
   def set_categorium
     @categorium = Categorium.find_by(id: params[:id])
 
@@ -74,7 +74,7 @@ class CategoriaController < ApplicationController
       redirect_to categoria_path,
                   alert: "La categoría no existe o ha sido eliminada.",
                   status: :see_other
-      return
+      nil
     end
   end
 

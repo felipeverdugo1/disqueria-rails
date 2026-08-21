@@ -4,10 +4,8 @@ class AutorsController < ApplicationController
 
   # GET /autors or /autors.json
   def index
-
     @q = Autor.ransack(params[:q])
     @autors = @q.result(distinct: true).order(:nombre).paginate(page: params[:page], per_page: 5)
-
   end
 
   # GET /autors/1 or /autors/1.json
@@ -81,8 +79,8 @@ class AutorsController < ApplicationController
         redirect_to autors_path,
                     alert: "El artista no existe o ha sido eliminado.",
                     status: :see_other
-        return
-        end
+        nil
+      end
       end
 
     # Only allow a list of trusted parameters through.

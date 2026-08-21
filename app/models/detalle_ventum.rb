@@ -1,5 +1,5 @@
 class DetalleVentum < ApplicationRecord
-  belongs_to :ventum, foreign_key: 'venta_id' 
+  belongs_to :ventum, foreign_key: "venta_id"
   belongs_to :producto
 
   validates :cantidad, presence: true, numericality: { greater_than: 0 }

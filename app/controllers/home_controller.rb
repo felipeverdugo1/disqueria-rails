@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index]
-  
+  skip_before_action :authenticate_user!, only: [ :index ]
+
   def index
     @q = Producto.activos.ransack(params[:q])
     @productos = @q.result(distinct: true)

@@ -15,13 +15,13 @@ class VentaController < ApplicationController
   def nueva
     # Inicializar carrito en sesión si no existe
     session[:carrito] ||= []
-    
+
     # Buscar productos disponibles
     @q = Producto.activos.where("stock > 0").ransack(params[:q])
     @productos = @q.result(distinct: true).paginate(page: params[:page], per_page: 12)
-    
+
     # Obtener productos del carrito
-    @carrito_productos = Producto.where(id: session[:carrito].map { |item| item['producto_id'] })
+    @carrito_productos = Producto.where(id: session[:carrito].map { |item| item["producto_id"] })
   end
 
   # POST /venta/agregar_producto
@@ -29,41 +29,41 @@ class VentaController < ApplicationController
     session[:carrito] ||= []
     producto_id = params[:producto_id].to_i
     cantidad = params[:cantidad].to_i
-    
+
     producto = Producto.find(producto_id)
-    
+
     # Verificar stock
     if cantidad > producto.stock
       redirect_to nueva_venta_path, alert: "Stock insuficiente para #{producto.nombre}"
       return
     end
-    
+
     # Buscar si ya existe en el carrito
-    item_existente = session[:carrito].find { |item| item['producto_id'] == producto_id }
-    
+    item_existente = session[:carrito].find { |item| item["producto_id"] == producto_id }
+
     if item_existente
       # Actualizar cantidad
-      nueva_cantidad = item_existente['cantidad'] + cantidad
+      nueva_cantidad = item_existente["cantidad"] + cantidad
       if nueva_cantidad > producto.stock
         redirect_to nueva_venta_path, alert: "Stock insuficiente para #{producto.nombre}"
         return
       end
-      item_existente['cantidad'] = nueva_cantidad
+      item_existente["cantidad"] = nueva_cantidad
     else
       # Agregar nuevo item
       session[:carrito] << {
-        'producto_id' => producto_id,
-        'cantidad' => cantidad,
-        'precio' => producto.precio
+        "producto_id" => producto_id,
+        "cantidad" => cantidad,
+        "precio" => producto.precio
       }
     end
-    
+
     redirect_to nueva_venta_path, notice: "#{producto.nombre} agregado al carrito"
   end
 
   # DELETE /venta/quitar_producto/:producto_id
   def quitar_producto
-    session[:carrito]&.reject! { |item| item['producto_id'] == params[:producto_id].to_i }
+    session[:carrito]&.reject! { |item| item["producto_id"] == params[:producto_id].to_i }
     redirect_to nueva_venta_path, notice: "Producto eliminado del carrito"
   end
 
@@ -73,9 +73,9 @@ class VentaController < ApplicationController
       redirect_to nueva_venta_index_path, alert: "Debe agregar productos al carrito primero"
       return
     end
-    
+
     @ventum = Ventum.new
-    @carrito_productos = Producto.where(id: session[:carrito].map { |item| item['producto_id'] })
+    @carrito_productos = Producto.where(id: session[:carrito].map { |item| item["producto_id"] })
     @total = calcular_total
   end
 
@@ -85,36 +85,36 @@ class VentaController < ApplicationController
       redirect_to nueva_venta_path, alert: "El carrito está vacío"
       return
     end
-    
+
     @ventum = Ventum.new(ventum_params)
     @ventum.user_id = current_user.id
     @ventum.total = calcular_total
     @ventum.fecha = Time.current
-    
+
     # Cargar variables necesarias para la vista en caso de error
-    @carrito_productos = Producto.where(id: session[:carrito].map { |item| item['producto_id'] })
+    @carrito_productos = Producto.where(id: session[:carrito].map { |item| item["producto_id"] })
     @total = calcular_total
-    
+
     ActiveRecord::Base.transaction do
       if @ventum.save
         # Crear detalles de venta y actualizar stock
         session[:carrito].each do |item|
-          producto = Producto.find(item['producto_id'])
-          
+          producto = Producto.find(item["producto_id"])
+
           DetalleVentum.create!(
             venta_id: @ventum.id,
             producto_id: producto.id,
-            cantidad: item['cantidad'],
-            precio_unitario: item['precio']
+            cantidad: item["cantidad"],
+            precio_unitario: item["precio"]
           )
-          
+
           # Actualizar stock
-          producto.update!(stock: producto.stock - item['cantidad'])
+          producto.update!(stock: producto.stock - item["cantidad"])
         end
-        
+
         # Limpiar carrito
         session[:carrito] = []
-        
+
         redirect_to @ventum, notice: "Venta registrada exitosamente"
       else
         # Si la validación falla, renderizar la vista con los errores
@@ -169,14 +169,13 @@ class VentaController < ApplicationController
 
 
   def factura
-
     respond_to do |format|
       format.pdf do
         pdf = FacturaPdf.new(@ventum)
         send_data pdf.render,
                   filename: "factura_#{@ventum.id.to_s.rjust(6, '0')}.pdf",
-                  type: 'application/pdf',
-                  disposition: 'inline' # 'attachment' para descargar, el inline para ver en el navegador
+                  type: "application/pdf",
+                  disposition: "inline" # 'attachment' para descargar, el inline para ver en el navegador
       end
     end
   end
@@ -195,7 +194,7 @@ class VentaController < ApplicationController
                       alert: "La venta con ID #{params[:id]} no fue encontrada."
         end
       end
-      return false
+      false
   end
 
     def ventum_params
@@ -205,7 +204,7 @@ class VentaController < ApplicationController
     def calcular_total
       total = 0
       session[:carrito].each do |item|
-        total += item['precio'].to_f * item['cantidad']
+        total += item["precio"].to_f * item["cantidad"]
       end
       total
     end

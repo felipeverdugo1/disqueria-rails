@@ -1,6 +1,6 @@
 class UsuariosController < ApplicationController
   before_action :authenticate_user!
-  load_and_authorize_resource class: 'User'
+  load_and_authorize_resource class: "User"
   before_action :set_usuario, only: %i[ show edit update destroy ]
 
   def index

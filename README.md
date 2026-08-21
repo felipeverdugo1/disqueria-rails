@@ -119,6 +119,70 @@ La aplicación estará disponible en: `http://localhost:3000`
 
 ---
 
+
+# 🚀 Desarrollo Local con Docker
+
+Este proyecto se encuentra dockerizado y configurado para funcionar de forma consistente en **Windows, Mac y Linux**.
+
+---
+
+## 📋 Requisitos Previos
+
+* **Docker Desktop** (o Docker Engine con Docker Compose v2+)
+* **Git**
+
+---
+
+## 🛠️ Instalación y Puesta en Marcha
+
+### 1. Clonar el repositorio
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd <NOMBRE_DEL_PROYECTO>
+
+```
+
+### 2. Levantar los contenedores
+
+```bash
+docker compose up --build
+
+```
+
+> *Docker Compose cargará automáticamente la configuración de desarrollo (`docker-compose.override.yml`), montando el código local en tiempo real sin requerir recompilar imágenes tras cada cambio.*
+
+### 3. Configurar la Base de Datos
+
+*(Ejecutar únicamente la primera vez o tras resetear volúmenes)*
+
+```bash
+docker compose exec web bin/rails db:prepare db:seed
+
+```
+
+### 4. Acceso a la aplicación
+
+Abre tu navegador e ingresa a: **`http://localhost:3000`**
+
+---
+
+## 💻 Comandos Frecuentes
+
+| Acción | Comando |
+| --- | --- |
+| **Consola de Rails** | `docker compose exec web bin/rails console` |
+| **Correr Tests** | `docker compose exec web bin/rails test` |
+| **Terminal del Contenedor** | `docker compose exec web bash` |
+| **Ver Logs** | `docker compose logs -f web` |
+| **Detener Servicios** | `docker compose down` |
+
+---
+
+
+
+
+
 ### Datos de prueba
 
 El script `db/seeds.rb` incluye:
