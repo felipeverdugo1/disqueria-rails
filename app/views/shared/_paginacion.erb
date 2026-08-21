@@ -1,0 +1,35 @@
+<!-- filepath: c:\Users\Tiago\ejemplo_ruby\app\views\shared\_paginacion.erb -->
+<% if coleccion.present? && coleccion.total_pages > 1 %>
+    <!-- Versión móvil -->
+    <div class="flex flex-1 justify-between sm:hidden mt-8">
+      <% if coleccion.previous_page %>
+        <%= link_to 'Anterior', url_for(page: coleccion.previous_page), 
+            class: "relative inline-flex items-center rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 transition" %>
+      <% else %>
+        <span class="relative inline-flex items-center rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-2 text-sm font-medium text-slate-600 cursor-not-allowed">
+          Anterior
+        </span>
+      <% end %>
+      
+      <% if coleccion.next_page %>
+        <%= link_to 'Siguiente', url_for(page: coleccion.next_page), 
+            class: "relative ml-3 inline-flex items-center rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 transition" %>
+      <% else %>
+        <span class="relative ml-3 inline-flex items-center rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-2 text-sm font-medium text-slate-600 cursor-not-allowed">
+          Siguiente
+        </span>
+      <% end %>
+    </div>
+    
+    <!-- Versión escritorio -->
+     <div class="hidden sm:flex justify-center mt-8">
+        <%= will_paginate @productos, 
+            container: true,
+            class: "flex gap-2",
+            inner_window: 2,
+            outer_window: 0,
+            previous_label: "← Anterior",
+            next_label: "Siguiente →",
+            page_links: true %>
+      </div>
+<% end %>

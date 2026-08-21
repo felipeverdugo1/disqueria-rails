@@ -1,0 +1,45 @@
+<div class="flex items-center justify-center min-h-screen bg-slate-900">
+  <div class="w-full max-w-2xl space-y-8 bg-slate-800/60 rounded-3xl border border-slate-700/60 p-10 shadow-2xl">
+    <div class="text-center space-y-2">
+      <div class="mx-auto h-12 w-12 rounded-full bg-purple-500/20 flex items-center justify-center">
+        <svg class="h-7 w-7 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+      </div>
+      <h2 class="text-2xl font-semibold text-white tracking-tight">
+        <%= categorium.new_record? ? "Crear Categoría" : "Editar Categoría" %>
+      </h2>
+      <p class="text-sm text-slate-400">Completa los datos de la categoría</p>
+    </div>
+
+    <%= form_with(model: categorium, class: "space-y-6") do |form| %>
+      <% if categorium.errors.any? %>
+        <div class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+          <h3 class="text-sm font-semibold text-red-200 mb-2">
+            <%= pluralize(categorium.errors.count, "error") %> impidieron guardar esta categoría:
+          </h3>
+          <ul class="list-disc list-inside text-sm text-red-300 space-y-1">
+            <% categorium.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="space-y-2">
+        <%= form.label :nombre, class: "block text-sm font-medium text-slate-300" %>
+        <%= form.text_field :nombre, 
+            class: "w-full rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-3 text-slate-100 placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition",
+            placeholder: "Nombre de la categoría",
+            required: true %>
+      </div>
+
+      <div class="flex items-center justify-between gap-4 pt-4">
+        <%= form.submit categorium.new_record? ? "Crear Categoría" : "Actualizar Categoría", 
+            class: "w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition transform hover:-translate-y-0.5" %>
+        <%= link_to "Cancelar", categoria_path,
+            class: "w-full text-center rounded-xl bg-slate-700 hover:bg-slate-600 px-4 py-3 text-sm font-semibold text-white transition" %>
+      </div>
+    <% end %>
+  </div>
+</div>

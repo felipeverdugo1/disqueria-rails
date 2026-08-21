@@ -1,0 +1,120 @@
+<div class="max-w-4xl mx-auto">
+  <div class="bg-slate-800 rounded-lg shadow-xl border border-slate-700 p-8">
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6 pb-6 border-b border-slate-700">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Detalle de Venta</h1>
+        <p class="text-slate-400">Venta Nº <%= @ventum.id.to_s.rjust(6, '0') %></p>
+      </div>
+      <div class="text-right">
+        <p class="text-sm text-slate-400">Fecha</p>
+        <p class="text-lg font-semibold text-white"><%= @ventum.fecha.strftime('%d/%m/%Y %H:%M') if @ventum.fecha %></p>
+      </div>
+    </div>
+
+    <%= render @ventum %>
+
+    <!-- Detalle de productos -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold text-white mb-4">Productos vendidos</h2>
+      
+      <!-- Vista desktop (tabla) -->
+      <div class="hidden sm:block bg-slate-900 rounded-lg overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-slate-700">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-slate-300">Producto</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold text-slate-300">Cantidad</th>
+              <th class="px-4 py-3 text-right text-sm font-semibold text-slate-300">Precio Unit.</th>
+              <th class="px-4 py-3 text-right text-sm font-semibold text-slate-300">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700">
+            <% @ventum.detalle_ventas.each do |detalle| %>
+              <tr class="hover:bg-slate-800 transition">
+                <td class="px-4 py-3 text-white"><%= detalle.producto.nombre %></td>
+                <td class="px-4 py-3 text-center text-slate-300"><%= detalle.cantidad %></td>
+                <td class="px-4 py-3 text-right text-slate-300">$<%= number_with_delimiter(detalle.precio_unitario, delimiter: '.') %></td>
+                <td class="px-4 py-3 text-right text-white font-semibold">$<%= number_with_delimiter(detalle.subtotal, delimiter: '.') %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot class="bg-slate-700">
+            <tr>
+              <td colspan="3" class="px-4 py-4 text-right text-lg font-bold text-white">TOTAL:</td>
+              <td class="px-4 py-4 text-right text-2xl font-bold text-blue-400">$<%= number_with_delimiter(@ventum.total, delimiter: '.') %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Vista mobile (cards) -->
+      <div class="sm:hidden space-y-3">
+        <% @ventum.detalle_ventas.each do |detalle| %>
+          <div class="bg-slate-900 rounded-lg p-4 border border-slate-700">
+            <div class="flex justify-between items-start mb-3">
+              <h3 class="text-white font-semibold text-base flex-1 pr-2"><%= detalle.producto.nombre %></h3>
+              <span class="inline-flex items-center justify-center min-w-[32px] h-8 bg-indigo-600 text-white text-sm font-bold rounded px-2">
+                x<%= detalle.cantidad %>
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p class="text-slate-400 text-xs">Precio unitario</p>
+                <p class="text-slate-300 font-medium">$<%= number_with_delimiter(detalle.precio_unitario, delimiter: '.') %></p>
+              </div>
+              <div class="text-right">
+                <p class="text-slate-400 text-xs">Subtotal</p>
+                <p class="text-white font-bold text-base">$<%= number_with_delimiter(detalle.subtotal, delimiter: '.') %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        
+        <!-- Total mobile -->
+        <div class="bg-slate-700 rounded-lg p-4 mt-4">
+          <div class="flex justify-between items-center">
+            <span class="text-white font-bold text-lg">TOTAL:</span>
+            <span class="text-blue-400 font-bold text-2xl">$<%= number_with_delimiter(@ventum.total, delimiter: '.') %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex flex-wrap justify-center gap-5 mt-8 mx-auto pt-6 border-t border-slate-700">
+      <%= link_to venta_path, class: "inline-flex items-center px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition duration-300 border border-slate-600" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Volver a ventas
+      <% end %>
+
+      <% unless @ventum.cancelada? %>
+        <%= link_to factura_ventum_path(@ventum, format: :pdf), class: "inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-300", target: "_blank" do %>
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a2 2 0 002 2h4"/>
+          </svg>
+          Generar Factura PDF
+        <% end %>
+        
+        <%= button_to @ventum, method: :delete, 
+            class: "inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition duration-300",
+            data: { turbo_confirm: "¿Estás seguro de cancelar esta venta? El stock será restaurado." } do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Cancelar venta
+        <% end %>
+      <% else %>
+        <div class="inline-flex items-center px-4 py-2 bg-red-900/30 border border-red-500/50 text-red-300 rounded-lg font-medium">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Venta Cancelada
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
