@@ -1,51 +1,48 @@
-# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+# ==========================================
+# Control de versiones y entorno local
+# ==========================================
+.git
+.gitignore
+.gitattributes
+.env
+.env.*
 
-# Ignore git directory.
-/.git/
-/.gitignore
+# ==========================================
+# IDEs y configuración de editores
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
 
-# Ignore bundler config.
-/.bundle
+# ==========================================
+# Logs y archivos temporales de Rails
+# ==========================================
+log/*
+tmp/*
+!log/.keep
+!tmp/.keep
 
-# Ignore all environment files.
-/.env*
+# ==========================================
+# Caches, almacenamiento local y Node/Assets
+# ==========================================
+storage/*
+!storage/.keep
+public/assets
+public/packs
+node_modules/
+.byebug_history
 
-# Ignore all default key files.
-/config/master.key
-/config/credentials/*.key
+# ==========================================
+# Secretos y credenciales de Rails
+# ==========================================
+config/master.key
+config/credentials/*.key
 
-# Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
-
-# Ignore pidfiles, but keep the directory.
-/tmp/pids/*
-!/tmp/pids/.keep
-
-# Ignore storage (uploaded files in development and any SQLite databases).
-/storage/*
-!/storage/.keep
-/tmp/storage/*
-!/tmp/storage/.keep
-
-# Ignore assets.
-/node_modules/
-/app/assets/builds/*
-!/app/assets/builds/.keep
-/public/assets
-
-# Ignore CI service files.
-/.github
-
-# Ignore Kamal files.
-/config/deploy*.yml
-/.kamal
-
-# Ignore development files
-/.devcontainer
-
-# Ignore Docker-related files
-/.dockerignore
-/Dockerfile*
+# ==========================================
+# Docker
+# ==========================================
+Dockerfile
+docker-compose.yml
+.dockerignore
